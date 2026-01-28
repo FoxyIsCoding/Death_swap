@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "death_swap",
+  "version": "${version}",
+
+  "name": "death swap",
+  "description": "An mod that enhances some aspects of Minecraft",
+  "authors": [],
+  "contact": {},
+
+  "license": "All-Rights-Reserved",
+  "icon": "assets/death_swap/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": ["org.FoxysMods.death_swap.client.Death_swapDataGenerator"],
+    "client": ["org.FoxysMods.death_swap.client.Death_swapClient"],
+    "main": ["org.FoxysMods.death_swap.Death_swap"]
+  },
+
+  "mixins": [
+    "death_swap.mixins.json"
+    ,{
+      "config": "death_swap.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
