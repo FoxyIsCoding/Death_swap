@@ -6,22 +6,16 @@ import net.minecraft.server.network.ServerPlayerEntity;
 public class SwapLogic {
     public static void swap(MinecraftServer server) {
         var playerList = server.getPlayerManager().getPlayerList();
-        for (int i=0; i < playerList.size(); i++) {
+        for (int i=0; i < playerList.size(); i+=2) {
             ServerPlayerEntity playerA = playerList.get(i);
             ServerPlayerEntity playerB = playerList.get((i + 1) % playerList.size());
 
             var posA = playerA.getPos();
-
-            playerA.requestTeleport(
-                    playerB.getX(),
-                    playerB.getY(),
-                    playerB.getZ()
+            playerA.teleport(
+                playerB.getX(),playerB.getY(),playerB.getZ()
             );
-
-            playerB.requestTeleport(
-                    posA.x,
-                    posA.y,
-                    posA.z
+            playerB.teleport(
+                posA.x, posA.y, posA.z
             );
         }
     }
