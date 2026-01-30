@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -63,6 +64,12 @@ public class Death_swap implements ModInitializer {
                 player.changeGameMode(GameMode.SPECTATOR);
 
                 WinnerLogic.checkForWinner(player.getServer());
+            }
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((serverPlayNetworkHandler, sender, server)->{
+            if (isActive) {
+                serverPlayNetworkHandler.getPlayer().changeGameMode(GameMode.SPECTATOR);
             }
         });
     }
