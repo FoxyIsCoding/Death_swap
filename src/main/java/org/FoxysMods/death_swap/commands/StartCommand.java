@@ -1,4 +1,4 @@
-package org.FoxysMods.death_swap;
+package org.FoxysMods.death_swap.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.CommandManager;
@@ -10,13 +10,15 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.FoxysMods.death_swap.Death_swap;
+import org.FoxysMods.death_swap.MainBossbar;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MainCommand {
+public class StartCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("deathswap").then(CommandManager.literal("start").executes(commandContext -> {
             ServerCommandSource source = commandContext.getSource();

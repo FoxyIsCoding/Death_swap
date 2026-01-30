@@ -11,6 +11,11 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.GameMode;
+import org.FoxysMods.death_swap.commands.SettingsCommand;
+import org.FoxysMods.death_swap.commands.StartCommand;
+
+import java.util.List;
 
 public class Death_swap implements ModInitializer {
     public static int swapInterval = 300;
@@ -21,7 +26,8 @@ public class Death_swap implements ModInitializer {
     @Override
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, registrationEnvironment) -> {
-            MainCommand.register(dispatcher);
+            StartCommand.register(dispatcher);
+            SettingsCommand.register(dispatcher);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
