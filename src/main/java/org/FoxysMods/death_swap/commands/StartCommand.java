@@ -10,6 +10,8 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import org.FoxysMods.death_swap.Death_swap;
 import org.FoxysMods.death_swap.MainBossbar;
 

@@ -21,7 +21,7 @@ public class Death_swap implements ModInitializer {
     public static int swapInterval = 300;
     public static int swapTime = 0;
     public static boolean isActive = false;
-    public static List<ServerPlayerEntity> deathPlayers;
+    public static MainBossbar MainBossbar;
 
     @Override
     public void onInitialize() {
@@ -59,10 +59,10 @@ public class Death_swap implements ModInitializer {
         });
 
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
-            if (isActive && entity instanceof ServerPlayerEntity) {
-                ServerPlayerEntity player = (ServerPlayerEntity) entity;
+            if (isActive && entity instanceof ServerPlayerEntity player) {
                 player.changeGameMode(GameMode.SPECTATOR);
-                deathPlayers.add(player);
+
+                WinnerLogic.checkForWinner(player.getServer());
             }
         });
     }
