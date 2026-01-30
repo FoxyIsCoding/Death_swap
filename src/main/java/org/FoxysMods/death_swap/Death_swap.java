@@ -15,6 +15,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.world.GameMode;
 import org.FoxysMods.death_swap.commands.SettingsCommand;
 import org.FoxysMods.death_swap.commands.StartCommand;
+import org.FoxysMods.death_swap.commands.StopCommand;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class Death_swap implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, registrationEnvironment) -> {
             StartCommand.register(dispatcher);
             SettingsCommand.register(dispatcher);
+            StopCommand.register(dispatcher);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
