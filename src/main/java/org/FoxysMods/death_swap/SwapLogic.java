@@ -5,12 +5,15 @@ import net.minecraft.server.world.ServerWorld;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class SwapLogic {
     record TP(ServerWorld w, double x, double y, double z, float yaw, float pitch) {}
 
     public static void swap(MinecraftServer server) {
-        var playerList = server.getPlayerManager().getPlayerList();
+        var playerList = server.getPlayerManager().getPlayerList().stream()
+                .filter(player -> !player.isSpectator())
+                .collect(Collectors.toCollection(ArrayList::new));
         var shuffledList = new ArrayList<>(playerList);
 
         if (playerList.size() < 2) return;
