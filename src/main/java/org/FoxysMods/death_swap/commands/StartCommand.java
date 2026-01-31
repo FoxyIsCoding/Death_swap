@@ -28,6 +28,11 @@ public class StartCommand {
             List<ServerPlayerEntity> playerList = server.getPlayerManager().getPlayerList();
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+            if (playerList.size() < 2) {
+                commandContext.getSource().sendError(Text.literal("You need at least 2 players"));
+                return 0;
+            }
+
             scheduler.schedule(() -> {
                 server.execute(() -> {
                     for (ServerPlayerEntity player : playerList) {
