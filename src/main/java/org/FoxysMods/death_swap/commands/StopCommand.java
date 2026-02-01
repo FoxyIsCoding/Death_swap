@@ -8,6 +8,9 @@ import org.FoxysMods.death_swap.StopLogic;
 public class StopCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("deathswap")
+                .requires(source -> {
+                    return source.hasPermissionLevel(2);
+                })
                 .then(CommandManager.literal("stop")
                         .executes(commandContext -> {
                             StopLogic.stop(commandContext.getSource().getServer());

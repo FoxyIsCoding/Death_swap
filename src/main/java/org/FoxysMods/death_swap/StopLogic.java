@@ -4,10 +4,17 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 public class StopLogic {
     public static void stop(MinecraftServer server) {
         Death_swap.isActive = false;
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        DeathSwapState state = DeathSwapState.getState(server);
+        var playerList = server.getPlayerManager().getPlayerList().stream()
+                .filter(p->!state.ignoredPlayers.contains(p.getName().getString()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        for (ServerPlayerEntity player : playerList) {
             player.changeGameMode(GameMode.DEFAULT);
             player.teleport(
                     server.getOverworld(),

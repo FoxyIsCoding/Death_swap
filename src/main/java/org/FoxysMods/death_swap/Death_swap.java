@@ -6,21 +6,21 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.GameMode;
+import org.FoxysMods.death_swap.commands.IgnoreCommand;
 import org.FoxysMods.death_swap.commands.SettingsCommand;
 import org.FoxysMods.death_swap.commands.StartCommand;
 import org.FoxysMods.death_swap.commands.StopCommand;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Death_swap implements ModInitializer {
-    public static int swapInterval = 300;
     public static int swapTime = 0;
     public static boolean isActive = false;
     public static MainBossbar MainBossbar;
@@ -31,24 +31,33 @@ public class Death_swap implements ModInitializer {
             StartCommand.register(dispatcher);
             SettingsCommand.register(dispatcher);
             StopCommand.register(dispatcher);
+            IgnoreCommand.register(dispatcher);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             MainBossbar.register();
         });
 
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            DeathSwapState.getState(server).markDirty();
+        });
+
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            DeathSwapState state = DeathSwapState.getState(server);
             if (server.getTicks() % 20 == 0) {
                 if (isActive) {
                     swapTime--;
-                    MainBossbar.bossbar.setPercent((float) swapTime / swapInterval);
+                    MainBossbar.bossbar.setPercent((float) swapTime / state.swapInterval);
                     if (swapTime <= 0) {
                         SwapLogic.swap(server);
-                        swapTime = swapInterval;
+                        swapTime = state.swapInterval;
                     }
 
                     if (swapTime <= 10) {
-                        for (var player : server.getPlayerManager().getPlayerList()) {
+                        var playerList = server.getPlayerManager().getPlayerList().stream()
+                                .filter(p->!state.ignoredPlayers.contains(p.getName().getString()))
+                                .collect(Collectors.toCollection(ArrayList::new));
+                        for (var player : playerList) {
                             player.sendMessage(
                                     Text.literal("Next swap in " + swapTime + " seconds!")
                                             .formatted(Formatting.RED, Formatting.BOLD),
@@ -63,8 +72,10 @@ public class Death_swap implements ModInitializer {
 
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if (isActive && entity instanceof ServerPlayerEntity player) {
-                player.changeGameMode(GameMode.SPECTATOR);
+                DeathSwapState state = DeathSwapState.getState(player.getServer());
+                if (state.ignoredPlayers.contains(player.getName().getString())) return;
 
+                player.changeGameMode(GameMode.SPECTATOR);
                 WinnerLogic.checkForWinner(player.getServer());
             }
         });
