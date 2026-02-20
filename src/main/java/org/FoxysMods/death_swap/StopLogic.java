@@ -12,7 +12,7 @@ public class StopLogic {
         Death_swap.isActive = false;
         DeathSwapState state = DeathSwapState.getState(server);
         var playerList = server.getPlayerManager().getPlayerList().stream()
-                .filter(p->!state.ignoredPlayers.contains(p.getName().getString()))
+                .filter(p->state.whitelist.contains(p.getName().getString()))
                 .collect(Collectors.toCollection(ArrayList::new));
         for (ServerPlayerEntity player : playerList) {
             player.changeGameMode(GameMode.DEFAULT);

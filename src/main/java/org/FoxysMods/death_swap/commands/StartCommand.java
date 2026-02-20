@@ -33,7 +33,7 @@ public class StartCommand {
                             var server = source.getServer();
                             DeathSwapState state = DeathSwapState.getState(server);
                             List<ServerPlayerEntity> playerList = server.getPlayerManager().getPlayerList().stream()
-                                    .filter(p -> !state.ignoredPlayers.contains(p.getName().getString()))
+                                    .filter(p -> state.whitelist.contains(p.getName().getString()))
                                     .collect(Collectors.toCollection(ArrayList::new));
                             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 

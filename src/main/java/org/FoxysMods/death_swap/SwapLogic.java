@@ -13,7 +13,7 @@ public class SwapLogic {
     public static void swap(MinecraftServer server) {
         DeathSwapState state = DeathSwapState.getState(server);
         var playerList = server.getPlayerManager().getPlayerList().stream()
-                .filter(player -> !state.ignoredPlayers.contains(player.getName().getString()))
+                .filter(player -> state.whitelist.contains(player.getName().getString()))
                 .filter(player -> !player.isSpectator())
                 .collect(Collectors.toCollection(ArrayList::new));
         var shuffledList = new ArrayList<>(playerList);

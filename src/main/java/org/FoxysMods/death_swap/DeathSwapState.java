@@ -9,17 +9,17 @@ import java.util.ArrayList;
 
 public class DeathSwapState extends PersistentState {
     public int swapInterval = 300;
-    public ArrayList<String> ignoredPlayers = new ArrayList<>();
+    public ArrayList<String> whitelist = new ArrayList<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
         nbt.putInt("swapInterval", swapInterval);
 
         var list = new net.minecraft.nbt.NbtList();
-        for (String name : ignoredPlayers) {
+        for (String name : whitelist) {
             list.add(net.minecraft.nbt.NbtString.of(name));
         }
-        nbt.put("ignoredPlayers", list);
+        nbt.put("whitelist", list);
 
         return nbt;
     }
@@ -29,9 +29,9 @@ public class DeathSwapState extends PersistentState {
 
         state.swapInterval = nbt.getInt("swapInterval");
 
-        var list = nbt.getList("ignoredPlayers", 8);
+        var list = nbt.getList("whitelist", 8);
         for (int i = 0; i < list.size(); i++) {
-            state.ignoredPlayers.add(list.getString(i));
+            state.whitelist.add(list.getString(i));
         }
 
         return state;

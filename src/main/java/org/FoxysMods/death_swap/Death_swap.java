@@ -12,7 +12,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.GameMode;
-import org.FoxysMods.death_swap.commands.IgnoreCommand;
+import org.FoxysMods.death_swap.commands.WhitelistCommand;
 import org.FoxysMods.death_swap.commands.SettingsCommand;
 import org.FoxysMods.death_swap.commands.StartCommand;
 import org.FoxysMods.death_swap.commands.StopCommand;
@@ -31,7 +31,7 @@ public class Death_swap implements ModInitializer {
             StartCommand.register(dispatcher);
             SettingsCommand.register(dispatcher);
             StopCommand.register(dispatcher);
-            IgnoreCommand.register(dispatcher);
+            WhitelistCommand.register(dispatcher);
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
@@ -55,7 +55,7 @@ public class Death_swap implements ModInitializer {
 
                     if (swapTime <= 10) {
                         var playerList = server.getPlayerManager().getPlayerList().stream()
-                                .filter(p->!state.ignoredPlayers.contains(p.getName().getString()))
+                                .filter(p->state.whitelist.contains(p.getName().getString()))
                                 .collect(Collectors.toCollection(ArrayList::new));
                         for (var player : playerList) {
                             player.sendMessage(
@@ -73,7 +73,7 @@ public class Death_swap implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if (isActive && entity instanceof ServerPlayerEntity player) {
                 DeathSwapState state = DeathSwapState.getState(player.getServer());
-                if (state.ignoredPlayers.contains(player.getName().getString())) return;
+                if (!state.whitelist.contains(player.getName().getString())) return;
 
                 player.changeGameMode(GameMode.SPECTATOR);
                 WinnerLogic.checkForWinner(player.getServer());
@@ -81,8 +81,10 @@ public class Death_swap implements ModInitializer {
         });
 
         ServerPlayConnectionEvents.JOIN.register((serverPlayNetworkHandler, sender, server)->{
-            if (isActive) {
-                serverPlayNetworkHandler.getPlayer().changeGameMode(GameMode.SPECTATOR);
+            var player = serverPlayNetworkHandler.getPlayer();
+            DeathSwapState state = DeathSwapState.getState(player.getServer());
+            if (isActive  && state.whitelist.contains(player.getName().getString())) {
+                player.changeGameMode(GameMode.SPECTATOR);
             }
         });
     }
