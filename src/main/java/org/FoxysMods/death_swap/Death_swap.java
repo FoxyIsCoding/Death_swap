@@ -35,7 +35,8 @@ public class Death_swap implements ModInitializer {
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            MainBossbar.register();
+            org.FoxysMods.death_swap.MainBossbar.register();
+            WinsScoreboard.register(server);
         });
 
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
